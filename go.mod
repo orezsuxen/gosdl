@@ -1,4 +1,4 @@
-module gosdl
+module local/gosdl
 
 go 1.22.5
 
