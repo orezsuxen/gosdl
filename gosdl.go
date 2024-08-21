@@ -1,42 +1,41 @@
 package main
 
-import "github.com/veandco/go-sdl2/sdl"
+import (
+	"local/gosdl/insignals"
+
+	"github.com/veandco/go-sdl2/sdl"
+)
 
 func main() {
+	ins := insignals.New()
+
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		panic(err)
 	}
 	defer sdl.Quit()
 
-	window, err := sdl.CreateWindow("test", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, 800, 600, sdl.WINDOW_SHOWN)
+	window, err := sdl.CreateWindow("the best window", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED, 800, 600, sdl.WINDOW_SHOWN)
 	if err != nil {
 		panic(err)
 	}
 	defer window.Destroy()
 
-	surface, err := window.GetSurface()
+	// implement of rederer flags like render to texture
+	rend, err := sdl.CreateRenderer(window, -1, 2)
 	if err != nil {
 		panic(err)
 	}
-	surface.FillRect(nil, 0)
+	defer rend.Destroy()
 
-	rect := sdl.Rect{0, 0, 200, 200}
-	colour := sdl.Color{R: 255, G: 0, B: 255, A: 255} // purple
-	pixel := sdl.MapRGBA(surface.Format, colour.R, colour.G, colour.B, colour.A)
-	surface.FillRect(&rect, pixel)
-	window.UpdateSurface()
+	rect := sdl.Rect{X: 0, Y: 0, W: 200, H: 200}
 
-	running := true
-	for running {
-		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch event.(type) {
-			case *sdl.QuitEvent: // NOTE: Please use `*sdl.QuitEvent` for `v0.4.x` (current version).
-				println("Quit")
-				running = false
-				break
-			}
-		}
-
-		sdl.Delay(33)
+	for ins.Quit == false && ins.Keys[sdl.SCANCODE_ESCAPE] == false {
+		ins.Update()
+		rend.SetDrawColor(128, 128, 128, 255)
+		rend.Clear()
+		rend.SetDrawColor(255, 0, 255, 255)
+		rend.FillRect(&rect)
+		rend.Present()
 	}
+	// sdl.Delay(33)
 }
