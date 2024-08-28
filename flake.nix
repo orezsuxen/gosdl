@@ -30,6 +30,7 @@
             pkg-config
             # alsa-lib
             SDL2
+            SDL2_ttf
           ];
         };
       });

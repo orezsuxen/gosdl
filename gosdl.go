@@ -4,10 +4,23 @@ import (
 	"local/gosdl/insignals"
 
 	"github.com/veandco/go-sdl2/sdl"
+	"github.com/veandco/go-sdl2/ttf"
 )
 
 func main() {
 	ins := insignals.New()
+
+	err := ttf.Init()
+	if err != nil {
+		panic(err)
+	}
+	defer ttf.Quit()
+
+	fonty, err := ttf.OpenFont("./FiraCodeNerdFont-Regular.ttf", 12)
+	if err != nil {
+		panic(err)
+	}
+	defer fonty.Close()
 
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		panic(err)
@@ -28,6 +41,17 @@ func main() {
 	defer rend.Destroy()
 
 	rect := sdl.Rect{X: 0, Y: 0, W: 200, H: 200}
+	rect2 := sdl.Rect{X: 200, Y: 200, W: 200, H: 20}
+
+	var fg sdl.Color = sdl.Color{R: 255, G: 255, B: 255, A: 255}
+	msgsurface, err := fonty.RenderUTF8Solid("test string <=", fg)
+	if err != nil {
+		panic(err)
+	}
+	msgtexture, err := rend.CreateTextureFromSurface(msgsurface)
+	if err != nil {
+		panic(err)
+	}
 
 	for ins.Quit == false && ins.Keys[sdl.SCANCODE_ESCAPE] == false {
 		ins.Update()
@@ -35,7 +59,8 @@ func main() {
 		rend.Clear()
 		rend.SetDrawColor(255, 0, 255, 255)
 		rend.FillRect(&rect)
+		rend.Copy(msgtexture, nil, &rect2)
+
 		rend.Present()
 	}
-	// sdl.Delay(33)
 }
