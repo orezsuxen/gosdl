@@ -8,13 +8,13 @@ import (
 
 type Insignals struct {
 	Quit bool
-	Keys map[byte]bool
+	Keys map[uint16]bool
 }
 
 func New() Insignals {
 	return Insignals{
 		Quit: false,
-		Keys: make(map[byte]bool),
+		Keys: make(map[uint16]bool),
 	}
 
 }
@@ -27,10 +27,10 @@ func (i *Insignals) Update() {
 		case *sdl.KeyboardEvent:
 			k := event.(*sdl.KeyboardEvent)
 			if k.State == sdl.PRESSED && k.Repeat == 0 {
-				i.Keys[byte(k.Keysym.Scancode)] = true
+				i.Keys[uint16(k.Keysym.Scancode)] = true
 			}
 			if k.State == sdl.RELEASED && k.Repeat == 0 {
-				i.Keys[byte(k.Keysym.Scancode)] = false
+				i.Keys[uint16(k.Keysym.Scancode)] = false
 			}
 		}
 
